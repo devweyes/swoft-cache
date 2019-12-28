@@ -1,0 +1,25 @@
+{
+  "name": "jcsp/cache",
+  "description": "cache manager for jcsp",
+  "authors": [
+  ],
+  "autoload": {
+    "psr-4": {
+      "Jcsp\\Cache": "src/"
+    }
+  },
+  "require": {
+    "php": ">7.1",
+    "swoft/cache": "~2.0.0"
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "http://satis.cweyes.cn"
+    },
+    {
+      "type": "composer",
+      "url": "https://mirrors.aliyun.com/composer/"
+    }
+  ]
+}
