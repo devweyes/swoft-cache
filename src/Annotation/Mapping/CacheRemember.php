@@ -13,9 +13,9 @@ use Doctrine\Common\Annotations\Annotation\Required;
  * @Target("METHOD")
  * @Attributes({
  *     @Attribute("key", type="string"),
- *     @Attribute("val", type="string"),
  *     @Attribute("ttl", type="int"),
- *     @Attribute("group", type="string"),
+ *     @Attribute("putListener", type="string"),
+ *     @Attribute("clearListener", type="string"),
  * })
  *
  * @since 2.0
@@ -25,11 +25,7 @@ final class CacheRemember
     /**
      * @var string
      */
-    private $key;
-    /**
-     * @var string
-     */
-    private $val;
+    private $key = '';
     /**
      * @var int
      */
@@ -53,9 +49,6 @@ final class CacheRemember
             $this->key = $values['value'];
         } elseif (isset($values['key'])) {
             $this->key = $values['key'];
-        }
-        if (isset($values['val'])) {
-            $this->val = $values['val'];
         }
         if (isset($values['ttl'])) {
             $this->ttl = (int)$values['ttl'];
@@ -91,19 +84,11 @@ final class CacheRemember
     {
         return $this->key;
     }
-
     /**
-     * @return string
+     * @return int
      */
-    public function getVal(): string
+    public function getTtl(): int
     {
-        return $this->val;
-    }
-    /**
-     * @return string
-     */
-    public function getPosition(): string
-    {
-        return $this->position;
+        return $this->ttl;
     }
 }

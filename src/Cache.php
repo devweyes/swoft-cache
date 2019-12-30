@@ -2,12 +2,14 @@
 
 namespace Jcsp\Cache;
 
+use Closure;
+use Jcsp\Cache\Lock\LockContract;
 use Swoft\Cache\Contract\CacheAdapterInterface;
 use Swoft\Redis\Connection\Connection;
 use Swoft\Redis\Connection\ConnectionManager;
 use Swoft\Redis\Exception\RedisException;
 use Throwable;
-
+use Swoft;
 /**
  * Class Cache
  *
@@ -21,12 +23,18 @@ use Throwable;
  * @method static bool deleteMultiple($keys)
  * @method static CacheAdapterInterface getAdapter()
  * @method static void setAdapter(CacheAdapterInterface $adapter)
+ * @method static LockContract lock($key, int $ttl = 0, $value = null)
  */
 class Cache
 {
+    // Cache manager bean name
+    public const LOCK    = 'cache.lock';
+    public const MANAGER    = 'cache.manager';
+    public const ADAPTER    = 'cache.adapter';
+    public const SERIALIZER = 'cache.serializer';
+
     public const ASP_BEFORE = 'before';
     public const ASP_AFTER = 'after';
-
     /**
      * @param string $method
      * @param array $arguments
@@ -36,7 +44,14 @@ class Cache
      */
     public static function __callStatic(string $method, array $arguments)
     {
-        $cacheManager = \Swoft\Cache\Cache::manager();
+        $cacheManager = self::manager();
         return $cacheManager->{$method}(...$arguments);
+    }
+    /**
+     * @return CacheManager
+     */
+    public static function manager(): CacheManager
+    {
+        return Swoft::getBean(self::MANAGER);
     }
 }

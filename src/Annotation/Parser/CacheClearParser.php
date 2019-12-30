@@ -8,6 +8,7 @@ use Swoft\Annotation\Annotation\Parser\Parser;
 use Swoft\Annotation\Exception\AnnotationException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Jcsp\Cache\Annotation\Mapping\CacheClear;
+use function config;
 
 /**
  * Class CacheClearParser
@@ -29,9 +30,11 @@ class CacheClearParser extends Parser
         if ($type !== self::TYPE_METHOD) {
             throw new AnnotationException('Annotation CacheClear shoud on method!');
         }
-        $key = $annotationObject->getKey() ?: config('name') . ":$this->className@$this->methodName";
+        $key = $annotationObject->getKey() ?: "$this->className@$this->methodName";
         $position = $annotationObject->getPosition();
-        $data = compact('key', 'position');
+        $data = [
+            $key, $position
+        ];
         CacheRegister::register($data, $this->className, $this->methodName, 'cacheClear');
         return [];
     }

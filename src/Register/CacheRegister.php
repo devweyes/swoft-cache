@@ -32,8 +32,20 @@ class CacheRegister
         string $className,
         string $methodName,
         string $type
-    ): void {
-        self::$data[$className][$emthodName][$type] = $data;
+    ): void
+    {
+        self::$data[$className][$methodName][$type] = $data;
+    }
+
+    /**
+     * @param string $className
+     * @param string $methodName
+     * @param string $type
+     * @return bool
+     */
+    public static function get(string $className, string $methodName, string $type)
+    {
+        return self::$data[$className][$methodName][$type] ?? [];
     }
 
     /**

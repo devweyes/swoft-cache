@@ -15,9 +15,7 @@ use Jcsp\Cache\Cache;
  * @Target("METHOD")
  * @Attributes({
  *     @Attribute("key", type="string"),
- *     @Attribute("val", type="string"),
- *     @Attribute("ttl", type="int"),
- *     @Attribute("group", type="string"),
+ *     @Attribute("position", type="string"),
  * })
  *
  * @since 2.0

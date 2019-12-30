@@ -16,7 +16,7 @@ use Jcsp\Cache\Cache;
  *     @Attribute("key", type="string"),
  *     @Attribute("val", type="string"),
  *     @Attribute("ttl", type="int"),
- *     @Attribute("group", type="string"),
+ *     @Attribute("clearListener", type="string"),
  * })
  *
  * @since 2.0
@@ -26,11 +26,11 @@ final class CachePut
     /**
      * @var string
      */
-    private $key;
+    private $key = '';
     /**
      * @var string
      */
-    private $val;
+    private $val = '';
     /**
      * @var int
      */
@@ -39,10 +39,6 @@ final class CachePut
      * @var string
      */
     private $clearListener = '';
-	/**
-	 * @var string
-	 */
-	private $position = Cache::ASP_AFTER;
     /**
      * Entity constructor.
      *
@@ -63,9 +59,6 @@ final class CachePut
         }
         if (isset($values['clearListener'])) {
             $this->clearListener = $values['clearListener'];
-        }
-        if (isset($values['position'])) {
-            $this->position = $values['position'];
         }
     }
 
@@ -91,14 +84,6 @@ final class CachePut
     public function getTtl(): int
     {
         return $this->ttl;
-    }
-
-    /**
-     * @return string
-     */
-    public function getGroup(): string
-    {
-        return $this->group;
     }
     /**
      * @return string

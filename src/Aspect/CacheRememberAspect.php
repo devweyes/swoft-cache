@@ -2,6 +2,7 @@
 
 namespace Jcsp\Cache\Aspect;
 
+use Jcsp\Cache\Register\CacheRegister;
 use Swoft\Aop\Annotation\Mapping\After;
 use Swoft\Aop\Annotation\Mapping\AfterReturning;
 use Swoft\Aop\Annotation\Mapping\AfterThrowing;
@@ -15,6 +16,8 @@ use Swoft\Aop\Point\ProceedingJoinPoint;
 use Jcsp\Cache\Annotation\Mapping\CacheRemember;
 use Swoft\Cache\Cache;
 use Swoft\Cache\CacheManager;
+use Swoft;
+use Swoft\Bean\Annotation\Mapping\Inject;
 
 /**
  * Class RelationPassiveAspect
@@ -28,42 +31,10 @@ use Swoft\Cache\CacheManager;
 class CacheRememberAspect
 {
     /**
+     * @Inject()
      * @var CacheManager
      */
     private $redis;
-
-    public function init(): void
-    {
-        $this->redis = Cache::manager();
-    }
-    /**
-     * @Before()
-     */
-    public function before()
-    {
-        // before
-    }
-
-    /**
-     * @After()
-     */
-    public function after()
-    {
-        // After
-    }
-
-    /**
-     * @AfterReturning()
-     *
-     * @param JoinPoint $joinPoint
-     *
-     * @return mixed
-     */
-    public function afterReturn(JoinPoint $joinPoint)
-    {
-        return '';
-    }
-
     /**
      * @Around()
      *
@@ -74,19 +45,46 @@ class CacheRememberAspect
     public function around(ProceedingJoinPoint $proceedingJoinPoint)
     {
         // Before around
+        $className = $proceedingJoinPoint->getClassName();
+        $methodName = $proceedingJoinPoint->getMethod();
+
+        $has = CacheRegister::has($className, $methodName, 'cacheRemember');
+        $has && ([$key, $ttl, $putListener, $clearListener] = CacheRegister::get($className, $methodName, 'cacheRemember'));
+
+        if ($has && $cache = $this->getCache($key)) {
+            return $cache;
+        }
         $result = $proceedingJoinPoint->proceed();
         // After around
-
+        $this->putCache((string)$key, $result, (int)$ttl, (string)$putListener);
         return $result;
     }
 
     /**
-     * @param \Throwable $throwable
-     *
-     * @AfterThrowing()
+     * get cache
+     * @param string $key
+     * @return mixed
+     * @throws \Psr\SimpleCache\InvalidArgumentException
      */
-    public function afterThrowing(\Throwable $throwable)
+    protected function getCache(string $key)
     {
-        // afterThrowing
+        return $this->redis->get($key);
+    }
+
+    /**
+     * put cache
+     * @param string $key
+     * @param $result
+     * @param int $ttl
+     * @param string $putListener
+     * @throws Swoft\Bean\Exception\ContainerException
+     * @throws \Psr\SimpleCache\InvalidArgumentException
+     */
+    protected function putCache(string $key, $result, int $ttl, string $putListener)
+    {
+        $this->redis->set($key, $result, $ttl);
+        if (!empty($putListener)) {
+            Swoft::trigger($putListener, $key, $result, $ttl);
+        }
     }
 }

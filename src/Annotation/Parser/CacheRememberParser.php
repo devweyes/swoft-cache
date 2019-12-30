@@ -29,12 +29,13 @@ class CacheRememberParser extends Parser
         if ($type !== self::TYPE_METHOD) {
             throw new AnnotationException('Annotation CacheClear shoud on method!');
         }
-        $key = $annotationObject->getKey() ?: config('name') . ":$this->className@$this->methodName";
-        $val = $annotationObject->getVal();
+        $key = $annotationObject->getKey() ?: "$this->className@$this->methodName";
         $ttl = $annotationObject->getTtl();
         $putListener = $annotationObject->getPutListener();
         $clearListener = $annotationObject->getClearListener();
-        $data = compact('key', 'val', 'ttl', 'putListener', 'clearListener');
+        $data = [
+            $key, $ttl, $putListener, $clearListener
+        ];
         CacheRegister::register($data, $this->className, $this->methodName, 'cacheRemember');
         return [];
     }
