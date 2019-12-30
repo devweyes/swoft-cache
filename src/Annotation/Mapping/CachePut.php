@@ -5,6 +5,7 @@
 namespace Jcsp\Cache\Annotation\Mapping;
 
 use Doctrine\Common\Annotations\Annotation\Required;
+use Jcsp\Cache\Cache;
 
 /**
  * Class CachePut
@@ -34,12 +35,14 @@ final class CachePut
      * @var int
      */
     private $ttl = -1;
-
     /**
      * @var string
      */
-    private $group = 'default';
-
+    private $clearListener = '';
+	/**
+	 * @var string
+	 */
+	private $position = Cache::ASP_AFTER;
     /**
      * Entity constructor.
      *
@@ -58,8 +61,11 @@ final class CachePut
         if (isset($values['ttl'])) {
             $this->ttl = (int)$values['ttl'];
         }
-        if (isset($values['group'])) {
-            $this->group = $values['group'];
+        if (isset($values['clearListener'])) {
+            $this->clearListener = $values['clearListener'];
+        }
+        if (isset($values['position'])) {
+            $this->position = $values['position'];
         }
     }
 
@@ -93,5 +99,12 @@ final class CachePut
     public function getGroup(): string
     {
         return $this->group;
+    }
+    /**
+     * @return string
+     */
+    public function getClearListener(): string
+    {
+        return $this->clearListener;
     }
 }

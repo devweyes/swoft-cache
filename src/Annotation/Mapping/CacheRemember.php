@@ -42,12 +42,6 @@ final class CacheRemember
      * @var string
      */
     private $clearListener = '';
-
-    /**
-     * @var string
-     */
-    private $group = 'default';
-
     /**
      * Entity constructor.
      *
@@ -66,8 +60,11 @@ final class CacheRemember
         if (isset($values['ttl'])) {
             $this->ttl = (int)$values['ttl'];
         }
-        if (isset($values['group'])) {
-            $this->group = $values['group'];
+        if (isset($values['putListener'])) {
+            $this->putListener = $values['putListener'];
+        }
+        if (isset($values['clearListener'])) {
+            $this->clearListener = $values['clearListener'];
         }
     }
 
@@ -102,20 +99,11 @@ final class CacheRemember
     {
         return $this->val;
     }
-
-    /**
-     * @return int
-     */
-    public function getTtl(): int
-    {
-        return $this->ttl;
-    }
-
     /**
      * @return string
      */
-    public function getGroup(): string
+    public function getPosition(): string
     {
-        return $this->group;
+        return $this->position;
     }
 }

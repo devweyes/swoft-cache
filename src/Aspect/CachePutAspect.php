@@ -13,6 +13,8 @@ use Swoft\Aop\Annotation\Mapping\PointBean;
 use Swoft\Aop\Point\JoinPoint;
 use Swoft\Aop\Point\ProceedingJoinPoint;
 use Jcsp\Cache\Annotation\Mapping\CachePut;
+use Swoft\Cache\Cache;
+use Swoft\Cache\CacheManager;
 
 /**
  * Class RelationPassiveAspect
@@ -25,6 +27,15 @@ use Jcsp\Cache\Annotation\Mapping\CachePut;
  */
 class CachePutAspect
 {
+	/**
+	 * @var CacheManager
+	 */
+	private $redis;
+
+	public function init(): void
+	{
+		$this->redis = Cache::manager();
+	}
     /**
      * @Before()
      */

@@ -10,67 +10,40 @@ namespace Jcsp\Cache\Register;
 class CacheRegister
 {
     /**
-     * Relation array
+     * cache config array
      *
      * @var array
      *
      * @example
      * [
-
      * ]
      */
     private static $data = [];
 
     /**
      * Register relation
+     * @param array $data
      * @param string $className
-     * @param string $propertyName
+     * @param string $methodName
      * @param string $type
-     * @param string $foreignEntity
-     * @param array $keys
      */
     public static function register(
+        array $data,
         string $className,
-        string $propertyName,
-        string $type,
-        string $foreignEntity,
-        array $keys
+        string $methodName,
+        string $type
     ): void {
-        self::$relation[$className][$propertyName] = [
-            'property' => $propertyName,
-            'type' => $type,
-            'foreignEntity' => $foreignEntity,
-            'key' => $keys
-        ];
+        self::$data[$className][$emthodName][$type] = $data;
     }
 
     /**
-     * has relation
      * @param string $className
-     * @param string $propertyName
+     * @param string $methodName
+     * @param string $type
      * @return bool
      */
-    public static function has(string $className, string $propertyName = null)
+    public static function has(string $className, string $methodName, string $type)
     {
-        if ($propertyName) {
-            return !empty(self::$relation[$className][$propertyName]);
-        }
-        if (!$propertyName) {
-            return !empty(self::$relation[$className]);
-        }
-    }
-
-    /**
-     * get relation
-     * @return array
-     */
-    public static function get(string $className, string $propertyName = null)
-    {
-        if ($propertyName) {
-            return self::$relation[$className][$propertyName] ?? [];
-        }
-        if (!$propertyName) {
-            return self::$relation[$className] ?? [];
-        }
+        return !empty(self::$data[$className][$methodName][$type]);
     }
 }

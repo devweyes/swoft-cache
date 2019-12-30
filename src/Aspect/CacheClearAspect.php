@@ -13,6 +13,9 @@ use Swoft\Aop\Annotation\Mapping\PointBean;
 use Swoft\Aop\Point\JoinPoint;
 use Swoft\Aop\Point\ProceedingJoinPoint;
 use Jcsp\Cache\Annotation\Mapping\CacheClear;
+use Swoft\Bean\BeanFactory;
+use Swoft\Cache\Cache;
+use Swoft\Cache\CacheManager;
 
 /**
  * Class RelationPassiveAspect
@@ -25,6 +28,16 @@ use Jcsp\Cache\Annotation\Mapping\CacheClear;
  */
 class CacheClearAspect
 {
+    /**
+     * @var CacheManager
+     */
+    private $redis;
+
+    public function init(): void
+    {
+        $this->redis = Cache::manager();
+    }
+
     /**
      * @Before()
      */
@@ -50,7 +63,7 @@ class CacheClearAspect
      */
     public function afterReturn(JoinPoint $joinPoint)
     {
-       return '';
+        return '';
     }
 
     /**
