@@ -1,7 +1,13 @@
 {
   "name": "devweyes/cache",
   "description": "cache for swoft",
+  "license": "MIT",
+  "keywords": [
+    "cache",
+    "swoft"
+  ],
   "authors": [
+    "1688609@gmail.com"
   ],
   "autoload": {
     "psr-4": {
