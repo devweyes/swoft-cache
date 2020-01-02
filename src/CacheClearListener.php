@@ -43,7 +43,6 @@ class CacheClearListener implements EventHandlerInterface
         $key = $data['data'][0] ?? '';
         $prefix = $key ? '' : $data['className'] . '@' . $data['methodName'];
         $key = CacheRegister::formatedKey($prefix, $argsMap, $key);
-        d('clear',$key);
         Cache::delete($key);
     }
 }
