@@ -62,9 +62,9 @@ final class AutoLoader extends SwoftComponent
                 'lockAdapter' => Cache::LOCK
             ],
             Cache::ADAPTER => [
-                'class' => \Swoft\Cache\Adapter\RedisAdapter::class,
+                'class' => \Jcsp\Cache\Adapter\RedisAdapter::class,
                 'redis' => bean('redis.pool'),
-                'prefix' => config('name') . ':',
+                'prefix' => 'cache_',
                 'serializer' => bean(Cache::SERIALIZER),
             ],
             Cache::LOCK => [

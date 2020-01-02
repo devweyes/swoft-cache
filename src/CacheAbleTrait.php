@@ -8,7 +8,6 @@ use Swoft\Bean\BeanFactory;
 
 trait CacheAbleTrait
 {
-
     /**
      * Get an item from the cache, or execute the given Closure and store the result.
      * @param $key
@@ -23,7 +22,7 @@ trait CacheAbleTrait
         if ($value !== null) {
             return $value;
         }
-        $this->put($key, $value = $callback(), $ttl);
+        $this->set($key, $value = $callback(), $ttl);
 
         return $value;
     }
@@ -60,6 +59,20 @@ trait CacheAbleTrait
     }
 
     /**
+     * Retrieve an item from the cache and delete it.
+     *
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public function pull($key, $default = null)
+    {
+        return tap($this->get($key, $default), function () use ($key) {
+            $this->delete($key);
+        });
+    }
+
+    /**
      * Get a lock instance.
      *
      * @param  $key
@@ -73,5 +86,18 @@ trait CacheAbleTrait
         $lock = BeanFactory::getBean(Cache::LOCK);
         $lock->reset($key, $ttl, $value);
         return $lock;
+    }
+
+    /**
+     * 缓存清除事件
+     * @param string $event
+     * @param array $args
+     * @param null $target
+     * @return mixed
+     * @throws \Swoft\Bean\Exception\ContainerException
+     */
+    public function clearTrigger(string $event, array $args = [], $target = null)
+    {
+        return \Swoft::trigger(Cache::CLEAR_EVENT, $target, $event, $args);
     }
 }

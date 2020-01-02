@@ -14,8 +14,7 @@ use Swoft\Aop\Annotation\Mapping\PointBean;
 use Swoft\Aop\Point\JoinPoint;
 use Swoft\Aop\Point\ProceedingJoinPoint;
 use Jcsp\Cache\Annotation\Mapping\CacheRemember;
-use Swoft\Cache\Cache;
-use Swoft\Cache\CacheManager;
+use Jcsp\Cache\CacheManager;
 use Swoft;
 use Swoft\Bean\Annotation\Mapping\Inject;
 
@@ -35,6 +34,7 @@ class CacheRememberAspect
      * @var CacheManager
      */
     private $redis;
+
     /**
      * @Around()
      *
@@ -47,44 +47,29 @@ class CacheRememberAspect
         // Before around
         $className = $proceedingJoinPoint->getClassName();
         $methodName = $proceedingJoinPoint->getMethod();
+        $argsMap = $proceedingJoinPoint->getArgsMap();
 
         $has = CacheRegister::has($className, $methodName, 'cacheRemember');
-        $has && ([$key, $ttl, $putListener, $clearListener] = CacheRegister::get($className, $methodName, 'cacheRemember'));
 
-        if ($has && $cache = $this->getCache($key)) {
-            return $cache;
+        if (!$has) {
+            return $proceedingJoinPoint->proceed();
         }
-        $result = $proceedingJoinPoint->proceed();
-        // After around
-        $this->putCache((string)$key, $result, (int)$ttl, (string)$putListener);
-        return $result;
-    }
 
-    /**
-     * get cache
-     * @param string $key
-     * @return mixed
-     * @throws \Psr\SimpleCache\InvalidArgumentException
-     */
-    protected function getCache(string $key)
-    {
-        return $this->redis->get($key);
-    }
+        [$key, $ttl, $putListener,] = CacheRegister::get($className, $methodName, 'cacheRemember');
 
-    /**
-     * put cache
-     * @param string $key
-     * @param $result
-     * @param int $ttl
-     * @param string $putListener
-     * @throws Swoft\Bean\Exception\ContainerException
-     * @throws \Psr\SimpleCache\InvalidArgumentException
-     */
-    protected function putCache(string $key, $result, int $ttl, string $putListener)
-    {
-        $this->redis->set($key, $result, $ttl);
-        if (!empty($putListener)) {
-            Swoft::trigger($putListener, $key, $result, $ttl);
-        }
+        $prefix = $key ? '' : "$className@$methodName";
+        $key = CacheRegister::formatedKey($prefix, $argsMap, $key);
+
+        return $this->redis->remember(
+            $key,
+            (int)$ttl,
+            static function () use ($proceedingJoinPoint, $putListener, $key, $ttl) {
+                $result = $proceedingJoinPoint->proceed();
+                if (!empty($putListener)) {
+                    Swoft::trigger($putListener, $key, $result, $ttl);
+                }
+                return $result;
+            }
+        );
     }
 }

@@ -30,7 +30,7 @@ class CacheClearParser extends Parser
         if ($type !== self::TYPE_METHOD) {
             throw new AnnotationException('Annotation CacheClear shoud on method!');
         }
-        $key = $annotationObject->getKey() ?: "$this->className@$this->methodName";
+        $key = $annotationObject->getKey();
         $position = $annotationObject->getPosition();
         $data = [
             $key, $position

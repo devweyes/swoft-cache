@@ -10,6 +10,7 @@ use Swoft\Redis\Connection\ConnectionManager;
 use Swoft\Redis\Exception\RedisException;
 use Throwable;
 use Swoft;
+
 /**
  * Class Cache
  *
@@ -24,6 +25,12 @@ use Swoft;
  * @method static CacheAdapterInterface getAdapter()
  * @method static void setAdapter(CacheAdapterInterface $adapter)
  * @method static LockContract lock($key, int $ttl = 0, $value = null)
+ * @method static remember($key, $ttl, Closure $callback)
+ * @method static rememberForever($key, Closure $callback)
+ * @method static bool forever($key, $value)
+ * @method static pull($key, $default = null)
+ * @method static clearTrigger(string $event, array $args = [], $target = null)
+ *
  */
 class Cache
 {
@@ -35,6 +42,8 @@ class Cache
 
     public const ASP_BEFORE = 'before';
     public const ASP_AFTER = 'after';
+
+    public const CLEAR_EVENT = 'cache.event.clear';
     /**
      * @param string $method
      * @param array $arguments

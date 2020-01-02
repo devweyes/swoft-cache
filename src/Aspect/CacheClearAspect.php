@@ -16,8 +16,7 @@ use Swoft\Aop\Point\ProceedingJoinPoint;
 use Jcsp\Cache\Annotation\Mapping\CacheClear;
 use Swoft\Bean\Annotation\Mapping\Inject;
 use Swoft\Bean\BeanFactory;
-use Swoft\Cache\Cache;
-use Swoft\Cache\CacheManager;
+use Jcsp\Cache\CacheManager;
 use Jcsp\Cache\Cache as CacheStatic;
 
 /**
@@ -49,9 +48,16 @@ class CacheClearAspect
         // Before around
         $className = $proceedingJoinPoint->getClassName();
         $methodName = $proceedingJoinPoint->getMethod();
+        $argsMap = $proceedingJoinPoint->getArgsMap();
 
         $has = CacheRegister::has($className, $methodName, 'cacheClear');
-        $has && ([$key, $position] = CacheRegister::get($className, $methodName, 'cacheClear'));
+
+        if ($has) {
+            [$key, $position] = CacheRegister::get($className, $methodName, 'cacheClear');
+            $prefix = $key ? '' : "$className@$methodName";
+            $key = CacheRegister::formatedKey($prefix, $argsMap, $key);
+        }
+
         if ($has && $position === CacheStatic::ASP_BEFORE) {
             $this->redis->delete($key);
         }

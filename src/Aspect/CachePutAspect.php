@@ -15,8 +15,7 @@ use Swoft\Aop\Point\JoinPoint;
 use Swoft\Aop\Point\ProceedingJoinPoint;
 use Jcsp\Cache\Annotation\Mapping\CachePut;
 use Swoft\Bean\Annotation\Mapping\Inject;
-use Swoft\Cache\Cache;
-use Swoft\Cache\CacheManager;
+use Jcsp\Cache\CacheManager;
 use Swoft\Stdlib\Helper\JsonHelper;
 
 /**
@@ -48,14 +47,17 @@ class CachePutAspect
         // Before around
         $className = $proceedingJoinPoint->getClassName();
         $methodName = $proceedingJoinPoint->getMethod();
+        $argsMap = $proceedingJoinPoint->getArgsMap();
 
         $has = CacheRegister::has($className, $methodName, 'cachePut');
-        $has && ([$key, $val, $ttl, $clearListener] = CacheRegister::get($className, $methodName, 'cachePut'));
+        $has && ([$key, $val, $ttl, ] = CacheRegister::get($className, $methodName, 'cachePut'));
 
         $result = $proceedingJoinPoint->proceed();
         // After around
         if ($has) {
             $data = $result;
+            $prefix = $key ? '' : "$className@$methodName";
+            $key = CacheRegister::formatedKey($prefix, $argsMap, $key);
             if (!empty($val)) {
                 $data = $val;
             }

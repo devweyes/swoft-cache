@@ -22,7 +22,7 @@ abstract class Lock implements LockContract
     protected $seconds;
 
     /**
-     * The scope identifier of this lock.
+     * 值，锁空间
      *
      * @var string
      */
@@ -93,7 +93,7 @@ abstract class Lock implements LockContract
      * @param callable|null $callback
      * @return bool
      *
-     * @throws \Illuminate\Contracts\Cache\LockTimeoutException
+     * @throws LockTimeoutException
      */
     public function block($seconds, $callback = null): bool
     {

@@ -29,7 +29,7 @@ class CachePutParser extends Parser
         if ($type !== self::TYPE_METHOD) {
             throw new AnnotationException('Annotation CacheClear shoud on method!');
         }
-        $key = $annotationObject->getKey() ?: "$this->className@$this->methodName";
+        $key = $annotationObject->getKey();
         $val = $annotationObject->getVal();
         $ttl = $annotationObject->getTtl();
         $clearListener = $annotationObject->getClearListener();
@@ -37,6 +37,9 @@ class CachePutParser extends Parser
             $key, $val, $ttl, $clearListener
         ];
         CacheRegister::register($data, $this->className, $this->methodName, 'cachePut');
+        if (!empty($clearListener)) {
+            CacheRegister::registerClearData($data, $this->className, $this->methodName);
+        }
         return [];
     }
 }

@@ -2,12 +2,14 @@
 
 namespace Jcsp\Cache\Annotation\Parser;
 
+use Jcsp\Cache\Cache;
 use Jcsp\Cache\Register\CacheRegister;
 use Swoft\Annotation\Annotation\Mapping\AnnotationParser;
 use Swoft\Annotation\Annotation\Parser\Parser;
 use Swoft\Annotation\Exception\AnnotationException;
 use Swoft\Bean\Annotation\Mapping\Bean;
 use Jcsp\Cache\Annotation\Mapping\CacheRemember;
+use Swoft\Bean\BeanFactory;
 
 /**
  * Class CacheRememberParser
@@ -29,7 +31,7 @@ class CacheRememberParser extends Parser
         if ($type !== self::TYPE_METHOD) {
             throw new AnnotationException('Annotation CacheClear shoud on method!');
         }
-        $key = $annotationObject->getKey() ?: "$this->className@$this->methodName";
+        $key = $annotationObject->getKey();
         $ttl = $annotationObject->getTtl();
         $putListener = $annotationObject->getPutListener();
         $clearListener = $annotationObject->getClearListener();
@@ -37,6 +39,9 @@ class CacheRememberParser extends Parser
             $key, $ttl, $putListener, $clearListener
         ];
         CacheRegister::register($data, $this->className, $this->methodName, 'cacheRemember');
+        if (!empty($clearListener)) {
+            CacheRegister::registerClearData($data, $this->className, $this->methodName);
+        }
         return [];
     }
 }

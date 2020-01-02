@@ -25,7 +25,6 @@ class CacheManager implements CacheInterface
      * @var LockContract
      */
     protected $lockAdapter;
-
     /**
      * @param string $key
      * @return bool
@@ -64,7 +63,7 @@ class CacheManager implements CacheInterface
      */
     public function delete($key)
     {
-        return $this->adapter->get($key);
+        return $this->adapter->delete($key);
     }
 
     /**
