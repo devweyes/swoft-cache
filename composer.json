@@ -1,6 +1,6 @@
 {
   "name": "devweyes/cache",
-  "description": "cache manager for jcsp",
+  "description": "cache for swoft",
   "authors": [
   ],
   "autoload": {
