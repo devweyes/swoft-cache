@@ -6,9 +6,6 @@
     "cache",
     "swoft"
   ],
-  "authors": [
-    "1688609@gmail.com"
-  ],
   "autoload": {
     "psr-4": {
       "Jcsp\\Cache\\": "src/"
