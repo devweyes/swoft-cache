@@ -2,7 +2,7 @@
 
 namespace Jcsp\Cache\Register;
 
-use Jcsp\Core\Helper\Str;
+use Jcsp\Cache\Helper\Str;
 use Swoft\Log\Helper\CLog;
 use Swoft\Stdlib\Helper\StringHelper;
 
