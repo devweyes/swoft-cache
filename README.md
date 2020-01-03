@@ -1,4 +1,4 @@
-# swoft-cache
+# cache 缓存
 
 1\. 介绍
 ----------------
@@ -9,7 +9,7 @@
 
 2.1 composer
 ```
-composer require devweyes/cache
+composer require jcsp/cache
 ```
 
 2.2 无需额外配置，```Autoload.php```中包含默认配置（可覆盖 key名需相同）。
@@ -109,26 +109,26 @@ class UserService implements UserInterface
    public function di()
     {
         //缓存30秒
-        $this-redis->set('key','value', 30);
+        $this-cache->set('key','value', 30);
         
         //缓存获取
-        $value = $this-redis->get('key');
+        $value = $this-cache->get('key');
         
         //缓存清除
-        $this-redis->delete('key');
+        $this-cache->delete('key');
         
         //30秒缓存 缓存不存在则查库 查库数据再存入缓存
-        $value = $this-redis->remember('users', 30, function () {
+        $value = $this-cache->remember('users', 30, function () {
               return DB::table('users')->get();
         });
         //获取并删除
-        $value = $this-redis->pull('key');
+        $value = $this-cache->pull('key');
         
         //数据永久存储  需要调用delete清除
-        $this-redis->forever('key', 'value');
+        $this-cache->forever('key', 'value');
         
         //缓存不存在则查库 查库数据再永久存入缓存 需要调用delete清除
-        $value = $this-redis->rememberForever('users', function () {
+        $value = $this-cache->rememberForever('users', function () {
               return DB::table('users')->get();
         });
     }
