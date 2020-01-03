@@ -3,6 +3,7 @@
 namespace Jcsp\Cache\Helper;
 
 use Swoft\Stdlib\Helper\Arr;
+use Swoft\Stdlib\Helper\StringHelper;
 
 class Str
 {
@@ -16,7 +17,7 @@ class Str
             if ($matches = self::parseCacheKey($value)) {
                 foreach ($matches as $search) {
                     $k = str_replace(['#{', '}'], '', $search);
-                    $value = self::replaceFirst($search, (string) self::dataGet($arguments, $k), $value);
+                    $value = StringHelper::replaceFirst($search, (string) self::dataGet($arguments, $k), $value);
                 }
             }
         } else {
