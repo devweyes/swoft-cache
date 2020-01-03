@@ -2,6 +2,10 @@
 
 namespace Jcsp\Cache\Register;
 
+use Jcsp\Cache\Helper\Str;
+use Swoft\Log\Helper\CLog;
+use Swoft\Stdlib\Helper\StringHelper;
+
 /**
  * Class CacheRegister
  *
@@ -10,67 +14,102 @@ namespace Jcsp\Cache\Register;
 class CacheRegister
 {
     /**
-     * Relation array
+     * cache config array
      *
      * @var array
      *
      * @example
      * [
-
      * ]
      */
     private static $data = [];
+    /**
+     * clear config array
+     *
+     * @var array
+     *
+     * @example
+     * [
+     * ]
+     */
+    private static $clearListenerData = [];
 
     /**
      * Register relation
+     * @param array $data
      * @param string $className
-     * @param string $propertyName
+     * @param string $methodName
      * @param string $type
-     * @param string $foreignEntity
-     * @param array $keys
      */
     public static function register(
+        array $data,
         string $className,
-        string $propertyName,
-        string $type,
-        string $foreignEntity,
-        array $keys
+        string $methodName,
+        string $type
     ): void {
-        self::$relation[$className][$propertyName] = [
-            'property' => $propertyName,
-            'type' => $type,
-            'foreignEntity' => $foreignEntity,
-            'key' => $keys
-        ];
+        self::$data[$className][$methodName][$type] = $data;
     }
 
     /**
-     * has relation
      * @param string $className
-     * @param string $propertyName
+     * @param string $methodName
+     * @param string $type
      * @return bool
      */
-    public static function has(string $className, string $propertyName = null)
+    public static function get(string $className, string $methodName, string $type)
     {
-        if ($propertyName) {
-            return !empty(self::$relation[$className][$propertyName]);
-        }
-        if (!$propertyName) {
-            return !empty(self::$relation[$className]);
-        }
+        return self::$data[$className][$methodName][$type] ?? [];
     }
 
     /**
-     * get relation
+     * @param string $className
+     * @param string $methodName
+     * @param string $type
+     * @return bool
+     */
+    public static function has(string $className, string $methodName, string $type)
+    {
+        return !empty(self::$data[$className][$methodName][$type]);
+    }
+
+    /**
+     * Register relation
+     * @param array $data
+     * @param string $className
+     * @param string $methodName
+     * @param string $type
+     */
+    public static function registerClearData(
+        array $data,
+        string $className,
+        string $methodName
+    ): void {
+        if (!empty($data[3]) && empty(self::$clearListenerData[$data[3]])) {
+            self::$clearListenerData[$data[3]] = compact('className', 'methodName', 'data');
+        }
+        //self::$clearListenerData["$className@$methodName"] = compact('className', 'methodName', 'data');
+    }
+
+    /**
      * @return array
      */
-    public static function get(string $className, string $propertyName = null)
+    public static function getClearData(): array
     {
-        if ($propertyName) {
-            return self::$relation[$className][$propertyName] ?? [];
+        return self::$clearListenerData;
+    }
+
+    /**
+     * @param string $prefix
+     * @param array $arguments
+     * @param string|null $value
+     * @return string
+     */
+    public static function formatedKey(string $prefix, array $arguments, ?string $value = null): string
+    {
+        $key = Str::formatCacheKey($prefix, $arguments, $value);
+        if (strlen($key) > 64) {
+            CLog::warning('The cache key length is too long. The key is ' . $key);
         }
-        if (!$propertyName) {
-            return self::$relation[$className] ?? [];
-        }
+        return $key;
     }
 }
