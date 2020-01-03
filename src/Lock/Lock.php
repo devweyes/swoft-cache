@@ -3,7 +3,7 @@
 namespace Jcsp\Cache\Lock;
 
 use Jcsp\Cache\Exception\LockTimeoutException;
-use Jcsp\Core\Helper\Str;
+use Swoft\Stdlib\Helper\StringHelper;
 
 abstract class Lock implements LockContract
 {
@@ -37,7 +37,7 @@ abstract class Lock implements LockContract
     public function reset($name, $seconds, $owner):void
     {
         if ($owner === '') {
-            $owner = Str::random();
+            $owner = StringHelper::random();
         }
 
         $this->name = $name;
