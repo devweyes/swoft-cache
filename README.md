@@ -109,26 +109,26 @@ class UserService implements UserInterface
    public function di()
     {
         //缓存30秒
-        $this-cache->set('key','value', 30);
+        $this->cache->set('key','value', 30);
         
         //缓存获取
-        $value = $this-cache->get('key');
+        $value = $this->cache->get('key');
         
         //缓存清除
-        $this-cache->delete('key');
+        $this->cache->delete('key');
         
         //30秒缓存 缓存不存在则查库 查库数据再存入缓存
-        $value = $this-cache->remember('users', 30, function () {
+        $value = $this->cache->remember('users', 30, function () {
               return DB::table('users')->get();
         });
         //获取并删除
-        $value = $this-cache->pull('key');
+        $value = $this->cache->pull('key');
         
         //数据永久存储  需要调用delete清除
-        $this-cache->forever('key', 'value');
+        $this->cache->forever('key', 'value');
         
         //缓存不存在则查库 查库数据再永久存入缓存 需要调用delete清除
-        $value = $this-cache->rememberForever('users', function () {
+        $value = $this->cache->rememberForever('users', function () {
               return DB::table('users')->get();
         });
     }
