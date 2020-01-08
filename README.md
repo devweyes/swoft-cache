@@ -9,7 +9,7 @@
 
 2.1 composer
 ```
-composer require jcsp/cache
+composer require devweyes/cache
 ```
 
 2.2 无需额外配置，```Autoload.php```中包含默认配置（可覆盖 key名需相同）。
