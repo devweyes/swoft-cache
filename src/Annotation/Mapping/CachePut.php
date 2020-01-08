@@ -5,6 +5,7 @@
 namespace Jcsp\Cache\Annotation\Mapping;
 
 use Doctrine\Common\Annotations\Annotation\Required;
+use Jcsp\Cache\Cache;
 
 /**
  * Class CachePut
@@ -15,7 +16,7 @@ use Doctrine\Common\Annotations\Annotation\Required;
  *     @Attribute("key", type="string"),
  *     @Attribute("val", type="string"),
  *     @Attribute("ttl", type="int"),
- *     @Attribute("group", type="string"),
+ *     @Attribute("clearListener", type="string"),
  * })
  *
  * @since 2.0
@@ -25,21 +26,19 @@ final class CachePut
     /**
      * @var string
      */
-    private $key;
+    private $key = '';
     /**
      * @var string
      */
-    private $val;
+    private $val = '';
     /**
      * @var int
      */
     private $ttl = -1;
-
     /**
      * @var string
      */
-    private $group = 'default';
-
+    private $clearListener = '';
     /**
      * Entity constructor.
      *
@@ -58,8 +57,8 @@ final class CachePut
         if (isset($values['ttl'])) {
             $this->ttl = (int)$values['ttl'];
         }
-        if (isset($values['group'])) {
-            $this->group = $values['group'];
+        if (isset($values['clearListener'])) {
+            $this->clearListener = $values['clearListener'];
         }
     }
 
@@ -86,12 +85,11 @@ final class CachePut
     {
         return $this->ttl;
     }
-
     /**
      * @return string
      */
-    public function getGroup(): string
+    public function getClearListener(): string
     {
-        return $this->group;
+        return $this->clearListener;
     }
 }

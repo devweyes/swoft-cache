@@ -13,9 +13,9 @@ use Doctrine\Common\Annotations\Annotation\Required;
  * @Target("METHOD")
  * @Attributes({
  *     @Attribute("key", type="string"),
- *     @Attribute("val", type="string"),
  *     @Attribute("ttl", type="int"),
- *     @Attribute("group", type="string"),
+ *     @Attribute("putListener", type="string"),
+ *     @Attribute("clearListener", type="string"),
  * })
  *
  * @since 2.0
@@ -25,11 +25,7 @@ final class CacheRemember
     /**
      * @var string
      */
-    private $key;
-    /**
-     * @var string
-     */
-    private $val;
+    private $key = '';
     /**
      * @var int
      */
@@ -42,12 +38,6 @@ final class CacheRemember
      * @var string
      */
     private $clearListener = '';
-
-    /**
-     * @var string
-     */
-    private $group = 'default';
-
     /**
      * Entity constructor.
      *
@@ -60,14 +50,14 @@ final class CacheRemember
         } elseif (isset($values['key'])) {
             $this->key = $values['key'];
         }
-        if (isset($values['val'])) {
-            $this->val = $values['val'];
-        }
         if (isset($values['ttl'])) {
             $this->ttl = (int)$values['ttl'];
         }
-        if (isset($values['group'])) {
-            $this->group = $values['group'];
+        if (isset($values['putListener'])) {
+            $this->putListener = $values['putListener'];
+        }
+        if (isset($values['clearListener'])) {
+            $this->clearListener = $values['clearListener'];
         }
     }
 
@@ -94,28 +84,11 @@ final class CacheRemember
     {
         return $this->key;
     }
-
-    /**
-     * @return string
-     */
-    public function getVal(): string
-    {
-        return $this->val;
-    }
-
     /**
      * @return int
      */
     public function getTtl(): int
     {
         return $this->ttl;
-    }
-
-    /**
-     * @return string
-     */
-    public function getGroup(): string
-    {
-        return $this->group;
     }
 }

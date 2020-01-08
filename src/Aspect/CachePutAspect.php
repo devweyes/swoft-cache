@@ -2,6 +2,7 @@
 
 namespace Jcsp\Cache\Aspect;
 
+use Jcsp\Cache\Register\CacheRegister;
 use Swoft\Aop\Annotation\Mapping\After;
 use Swoft\Aop\Annotation\Mapping\AfterReturning;
 use Swoft\Aop\Annotation\Mapping\AfterThrowing;
@@ -13,6 +14,9 @@ use Swoft\Aop\Annotation\Mapping\PointBean;
 use Swoft\Aop\Point\JoinPoint;
 use Swoft\Aop\Point\ProceedingJoinPoint;
 use Jcsp\Cache\Annotation\Mapping\CachePut;
+use Swoft\Bean\Annotation\Mapping\Inject;
+use Jcsp\Cache\CacheManager;
+use Swoft\Stdlib\Helper\JsonHelper;
 
 /**
  * Class RelationPassiveAspect
@@ -26,32 +30,10 @@ use Jcsp\Cache\Annotation\Mapping\CachePut;
 class CachePutAspect
 {
     /**
-     * @Before()
+     * @Inject()
+     * @var CacheManager
      */
-    public function before()
-    {
-        // before
-    }
-
-    /**
-     * @After()
-     */
-    public function after()
-    {
-        // After
-    }
-
-    /**
-     * @AfterReturning()
-     *
-     * @param JoinPoint $joinPoint
-     *
-     * @return mixed
-     */
-    public function afterReturn(JoinPoint $joinPoint)
-    {
-       return '';
-    }
+    private $redis;
 
     /**
      * @Around()
@@ -63,19 +45,24 @@ class CachePutAspect
     public function around(ProceedingJoinPoint $proceedingJoinPoint)
     {
         // Before around
+        $className = $proceedingJoinPoint->getClassName();
+        $methodName = $proceedingJoinPoint->getMethod();
+        $argsMap = $proceedingJoinPoint->getArgsMap();
+
+        $has = CacheRegister::has($className, $methodName, 'cachePut');
+        $has && ([$key, $val, $ttl, ] = CacheRegister::get($className, $methodName, 'cachePut'));
+
         $result = $proceedingJoinPoint->proceed();
         // After around
-
+        if ($has) {
+            $data = $result;
+            $prefix = $key ? '' : "$className@$methodName";
+            $key = CacheRegister::formatedKey($prefix, $argsMap, $key);
+            if (!empty($val)) {
+                $data = $val;
+            }
+            $this->redis->set($key, $data, (int)$ttl);
+        }
         return $result;
-    }
-
-    /**
-     * @param \Throwable $throwable
-     *
-     * @AfterThrowing()
-     */
-    public function afterThrowing(\Throwable $throwable)
-    {
-        // afterThrowing
     }
 }

@@ -1,22 +1,23 @@
 {
-  "name": "jcsp/cache",
-  "description": "cache manager for jcsp",
-  "authors": [
+  "name": "devweyes/cache",
+  "description": "cache for swoft",
+  "license": "MIT",
+  "keywords": [
+    "cache",
+    "swoft"
   ],
   "autoload": {
     "psr-4": {
-      "Jcsp\\Cache": "src/"
+      "Jcsp\\Cache\\": "src/"
     }
   },
   "require": {
     "php": ">7.1",
-    "swoft/cache": "~2.0.0"
+    "swoft/cache": "~2.0.0",
+    "swoft/stdlib": "~2.0.0",
+    "swoft/bean": "~2.0.0"
   },
   "repositories": [
-    {
-      "type": "composer",
-      "url": "http://satis.cweyes.cn"
-    },
     {
       "type": "composer",
       "url": "https://mirrors.aliyun.com/composer/"

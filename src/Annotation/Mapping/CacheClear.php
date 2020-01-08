@@ -2,9 +2,11 @@
 /**
  * like Cache::clear()
  */
+
 namespace Jcsp\Cache\Annotation\Mapping;
 
 use Doctrine\Common\Annotations\Annotation\Required;
+use Jcsp\Cache\Cache;
 
 /**
  * Class CacheClear
@@ -13,9 +15,7 @@ use Doctrine\Common\Annotations\Annotation\Required;
  * @Target("METHOD")
  * @Attributes({
  *     @Attribute("key", type="string"),
- *     @Attribute("val", type="string"),
- *     @Attribute("ttl", type="int"),
- *     @Attribute("group", type="string"),
+ *     @Attribute("position", type="string"),
  * })
  *
  * @since 2.0
@@ -25,11 +25,11 @@ final class CacheClear
     /**
      * @var string
      */
-    private $key;
+    private $key = '';
     /**
      * @var string
      */
-    private $group = 'default';
+    private $position = Cache::ASP_AFTER;
 
     /**
      * Entity constructor.
@@ -43,8 +43,8 @@ final class CacheClear
         } elseif (isset($values['key'])) {
             $this->key = $values['key'];
         }
-        if (isset($values['group'])) {
-            $this->group = $values['group'];
+        if (isset($values['position'])) {
+            $this->position = $values['position'];
         }
     }
 
@@ -58,8 +58,8 @@ final class CacheClear
     /**
      * @return string
      */
-    public function getGroup(): string
+    public function getPosition(): string
     {
-        return $this->group;
+        return $this->position;
     }
 }
